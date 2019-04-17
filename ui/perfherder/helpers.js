@@ -725,3 +725,6 @@ export const nudgeAlert = (dataPoint, towardsDataPoint) => {
   const alertId = dataPoint.alert.id;
   return update(getApiUrl(`/performance/alert/${alertId}/`), towardsDataPoint);
 };
+
+export const convertParams = (params, value) =>
+  Boolean(params[value] !== undefined && parseInt(params[value], 10));

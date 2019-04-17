@@ -9,7 +9,6 @@ import {
     alertIsOfState,
     getAlertSummaries,
     getAlertSummary,
-    getAlertSummaryTitle,
     getIssueTrackerUrl,
     getTextualSummary,
     modifySelectedAlerts,
@@ -368,23 +367,6 @@ perf.controller('AlertsCtrl', [
                 $scope.alertSummaryCount = data.count;
                 $state.go('.', { page: $scope.alertSummaryCurrentPage }, { notify: false });
             });
-        };
-
-        $scope.summaryTitle = {
-            html: '<i class="fas fa-spinner fa-pulse" aria-hidden="true"/>',
-            promise: null,
-        };
-
-        $scope.getSummaryTitle = function (id) {
-            $scope.summaryTitle.promise = getAlertSummaryTitle(id);
-            $scope.summaryTitle.promise.then(
-                function (summaryTitle) {
-                    $scope.summaryTitle.html = '<p>' + summaryTitle + '</p>';
-                });
-        };
-
-        $scope.resetSummaryTitle = function () {
-            $scope.summaryTitle.html = '<i class="fas fa-spinner fa-pulse" aria-hidden="true"/>';
         };
 
         $scope.filtersUpdated = function () {
