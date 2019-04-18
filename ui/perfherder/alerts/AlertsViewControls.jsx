@@ -1,22 +1,20 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 // import { Col, Row, Container, Button } from 'reactstrap';
 
 // import SimpleTooltip from '../../shared/SimpleTooltip';
 import FilterControls from '../FilterControls';
 import { convertParams } from '../helpers';
+import { alertSummaryStatus } from '../constants';
 
 export default class AlertsViewControls extends React.Component {
   constructor(props) {
     super(props);
-
+    this.validated = this.props.validated;
     this.state = {
-      hideImprovements: convertParams(
-        this.props.$stateParams,
-        'hideImprovements',
-      ),
-      hideDownstream: convertParams(this.props.$stateParams, 'hideDownstream'),
-      filterText: '',
+      hideImprovements: convertParams(this.validated, 'hideImprovements'),
+      hideDownstream: convertParams(this.validated, 'hideDwnToInv'),
+      // filterText: '',
     };
   }
 
@@ -33,13 +31,6 @@ export default class AlertsViewControls extends React.Component {
 
   // updateFilterText = filterText => {
   //   this.setState({ filterText }, () => this.updateFilteredResults());
-  // };
-
-  // updateFilter = filter => {
-  //   this.setState(
-  //     prevState => ({ [filter]: !prevState[filter] }),
-  //     () => this.updateFilteredResults(),
-  //   );
   // };
 
   // filterResult = (testName, result) => {
@@ -108,8 +99,16 @@ export default class AlertsViewControls extends React.Component {
   //   this.setState({ results: filteredResults });
   // };
 
+  updateFilter = filter => {
+    this.setState(
+      prevState => ({ [filter]: !prevState[filter] }),
+      () => this.updateFilteredResults(),
+    );
+  };
+
   render() {
     const { hideImprovements, hideDownstream } = this.state;
+    const { dropdownOptions } = this.props;
     const alertFilters = [
       {
         text: 'Hide improvements',
@@ -123,68 +122,17 @@ export default class AlertsViewControls extends React.Component {
       },
     ];
 
-    // <span ng-if="!alertId" ng-cloak class="alert-selects d-flex">
-    // <div class="form-group">
-    //   <select ng-model="filterOptions.status"
-    //           ng-options="status.text for status in statuses track by status.id"
-    //           ng-change="filtersUpdated()"/>
-    // </div>
-    // &nbsp;
-    // <div class="form-group">
-    //   <select ng-model="filterOptions.framework"
-    //           ng-options="framework.name for framework in frameworks track by framework.id"
-    //           ng-change="filtersUpdated()"/>
-    // </div>
-
     return (
       <FilterControls
+        dropdownOptions={dropdownOptions}
         filterOptions={alertFilters}
         updateFilter={() => {}}
         updateFilterText={() => {}}
-        // dropdownOptions={
-        //   <Col sm="auto" className="py-0 pl-0 pr-3">
-        //   <UncontrolledDropdown className="mr-0 text-nowrap">
-        //     <DropdownToggle caret>{framework.name}</DropdownToggle>
-        //     {frameworkNames && (
-        //       <DropdownMenuItems
-        //         options={frameworkNames}
-        //         selectedItem={framework.name}
-        //         updateData={this.updateFramework}
-        //       />
-        //     )}
-        //   </UncontrolledDropdown>
-        // </Col>
-
-        // }
       />
     );
   }
 }
 
-// AlertsView.propTypes = {
-//   compareResults: PropTypes.shape({}).isRequired,
-//   frameworkOptions: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.bool]),
-//   dateRangeOptions: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.bool]),
-//   validated: PropTypes.shape({
-//     showOnlyImportant: PropTypes.string,
-//     showOnlyComparable: PropTypes.string,
-//     showOnlyConfident: PropTypes.string,
-//     showOnlyNoise: PropTypes.string,
-//   }),
-//   showTestsWithNoise: PropTypes.oneOfType([
-//     PropTypes.shape({}),
-//     PropTypes.bool,
-//   ]),
-// };
-
-// AlertsViewControls.defaultProps = {
-//   frameworkOptions: null,
-//   dateRangeOptions: null,
-//   validated: {
-//     showOnlyImportant: undefined,
-//     showOnlyComparable: undefined,
-//     showOnlyConfident: undefined,
-//     showOnlyNoise: undefined,
-//   },
-//   showTestsWithNoise: null,
-// };
+AlertsViewControls.propTypes = {
+  validated: PropTypes.shape({}).isRequired,
+};

@@ -419,6 +419,7 @@ perf.controller('AlertsCtrl', [
             $rootScope.repos = repos;
             $q.all([getData(getApiUrl(endpoints.frameworks)).then(({ data: frameworks }) => {
                 $scope.frameworks = frameworks;
+                // this doesn't seem to be needed
             }), OptionCollectionModel.getMap().then(function (optionCollectionMap) {
                 $scope.optionCollectionMap = optionCollectionMap;
             })]).then(function () {

@@ -11,7 +11,7 @@ import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
 import { update } from '../../helpers/http';
 import { getApiUrl } from '../../helpers/url';
 import { endpoints } from '../constants';
-import { getAlertStatus, getSubtestsURL, getGraphsURL } from '../helpers';
+import { getStatus, getSubtestsURL, getGraphsURL } from '../helpers';
 import SimpleTooltip from '../../shared/SimpleTooltip';
 import ProgressBar from '../ProgressBar';
 
@@ -132,7 +132,7 @@ export default class AlertTableRow extends React.Component {
     const { user, alert } = this.props;
     const { starred } = this.state;
 
-    const alertStatus = getAlertStatus(alert);
+    const alertStatus = getStatus(alert.status);
     const tooltipText = alert.classifier_email
       ? `Classified by ${alert.classifier_email}`
       : 'Classified automatically';

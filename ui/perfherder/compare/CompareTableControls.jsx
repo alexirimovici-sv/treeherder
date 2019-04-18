@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row } from 'reactstrap';
+import { Container } from 'reactstrap';
 
 import { filterText } from '../constants';
 import { convertParams } from '../helpers';
@@ -111,11 +111,7 @@ export default class CompareTableControls extends React.Component {
   };
 
   render() {
-    const {
-      frameworkOptions,
-      dateRangeOptions,
-      showTestsWithNoise,
-    } = this.props;
+    const { showTestsWithNoise, dropdownOptions } = this.props;
     const {
       hideUncomparable,
       hideUncertain,
@@ -158,12 +154,7 @@ export default class CompareTableControls extends React.Component {
           filterOptions={compareFilters}
           updateFilter={this.updateFilter}
           updateFilterText={this.updateFilterText}
-          dropdownOptions={
-            <Row className="p-3 justify-content-left">
-              {frameworkOptions}
-              {dateRangeOptions}
-            </Row>
-          }
+          dropdownOptions={dropdownOptions}
         />
 
         {showNoise && showTestsWithNoise}
@@ -182,8 +173,7 @@ export default class CompareTableControls extends React.Component {
 
 CompareTableControls.propTypes = {
   compareResults: PropTypes.shape({}).isRequired,
-  frameworkOptions: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.bool]),
-  dateRangeOptions: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.bool]),
+  dropdownOptions: PropTypes.arrayOf(PropTypes.shape({})),
   validated: PropTypes.shape({
     showOnlyImportant: PropTypes.string,
     showOnlyComparable: PropTypes.string,
@@ -197,8 +187,7 @@ CompareTableControls.propTypes = {
 };
 
 CompareTableControls.defaultProps = {
-  frameworkOptions: null,
-  dateRangeOptions: null,
+  dropdownOptions: [],
   validated: {
     showOnlyImportant: undefined,
     showOnlyComparable: undefined,
