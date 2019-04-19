@@ -652,6 +652,8 @@ export const getAlertSummaries = options => {
     if (options && options.frameworkFilter !== undefined) {
       params[params.length] = `framework=${options.frameworkFilter}`;
     }
+    // TODO replace all usage with createQueryParams except for
+    // signatureId and seriesSignature (used in graphs controller)
     if (options && options.signatureId !== undefined) {
       params[params.length] = `alerts__series_signature=${options.signatureId}`;
     }

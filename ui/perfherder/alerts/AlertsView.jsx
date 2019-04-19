@@ -2,12 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { react2angular } from 'react2angular/index.es2015';
 import { Alert, Container } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 import perf from '../../js/perf';
 import withValidation from '../Validation';
 import { convertParams, getFrameworkData, getStatus } from '../helpers';
-import { alertSummaryStatus } from '../constants';
-import FilterControls from '../FilterControls';
+import { alertSummaryStatus, endpoints } from '../constants';
+import { createQueryParams, getApiUrl } from '../../helpers/url';
+import { getData } from '../../helpers/http';
+import ErrorMessages from '../../shared/ErrorMessages';
 
 import AlertsViewControls from './AlertsViewControls';
 
@@ -19,9 +23,13 @@ export class AlertsView extends React.Component {
     this.state = {
       status: this.getDefaultStatus(),
       framework: getFrameworkData(this.validated),
-      page: this.validated.page ? parseInt(this.validated.page) : 1,
+      page: this.validated.page ? parseInt(this.validated.page, 10) : 1,
+      errorMessages: [],
+      data: [],
+      loading: true,
     };
   }
+
   // TODO need to add alert validation to Validation component
   // if ($stateParams.id) {
   //   $scope.alertId = $stateParams.id;
@@ -30,18 +38,14 @@ export class AlertsView extends React.Component {
   //           addAlertSummaries([data], null);
   //       });
   componentDidMount() {
-
+    this.fetchAlertSummaries();
   }
-    // getAlertSummaries({
-    //     statusFilter: $scope.filterOptions.status.id,
-    //     frameworkFilter: $scope.filterOptions.framework.id,
-    //     page: $scope.filterOptions.page,
-    // }).then(
-    //     function (data) {
-    //         addAlertSummaries(data.results, data.next);
-    //         $scope.alertSummaryCurrentPage = $scope.filterOptions.page;
-    //         $scope.alertSummaryCount = data.count;
-    // });
+
+  //     function (data) {
+  //         addAlertSummaries(data.results, data.next);
+  //         $scope.alertSummaryCurrentPage = $scope.filterOptions.page;
+  //         $scope.alertSummaryCount = data.count;
+  // });
 
   getDefaultStatus = () => {
     const { validated } = this.props;
@@ -66,15 +70,36 @@ export class AlertsView extends React.Component {
     this.props.validated.updateParams({ status: statusId });
     // TODO fetch new data, use statusId as param
     this.setState({ status });
+  };
+
+  async fetchAlertSummaries() {
+    const { framework, status, page } = this.state;
+
+    const url = getApiUrl(
+      `${endpoints.alertSummary}${createQueryParams({
+        framework: framework.id,
+        status: alertSummaryStatus[status],
+        page,
+      })}`,
+    );
+    const { data, failureStatus } = await getData(url);
+    const updates = { loading: false };
+
+    if (failureStatus) {
+      updates.errorMessages = [`Failure fetching alert summary data. ${data}`];
+    } else {
+      updates.data = data;
+    }
+    this.setState(updates);
   }
 
   render() {
     const { user, validated } = this.props;
-    const { framework, status } = this.state;
+    const { framework, status, errorMessages, loading } = this.state;
     const { frameworks } = validated;
 
     const frameworkNames =
-    frameworks && frameworks.length ? frameworks.map(item => item.name) : [];
+      frameworks && frameworks.length ? frameworks.map(item => item.name) : [];
 
     const alertDropdowns = [
       {
@@ -91,6 +116,23 @@ export class AlertsView extends React.Component {
 
     return (
       <Container fluid className="max-width-default">
+        {loading && (
+          <div className="loading">
+            <FontAwesomeIcon
+              icon={faCog}
+              size="4x"
+              spin
+              title="loading page, please wait"
+            />
+          </div>
+        )}
+
+        {errorMessages.length > 0 && (
+          <Container className="pt-5 max-width-default">
+            <ErrorMessages errorMessages={errorMessages} />
+          </Container>
+        )}
+
         {!user.isStaff && (
           <Alert color="info">
             You must be logged into perfherder/treeherder and be a sheriff to
@@ -107,7 +149,12 @@ AlertsView.propTypes = {
   $stateParams: PropTypes.shape({}),
   $state: PropTypes.shape({}),
   user: PropTypes.shape({}).isRequired,
-  validated: PropTypes.shape({}).isRequired,
+  validated: PropTypes.shape({
+    projects: PropTypes.arrayOf(PropTypes.shape({})),
+    frameworks: PropTypes.arrayOf(PropTypes.shape({})),
+    updateParams: PropTypes.func.isRequired,
+    framework: PropTypes.string,
+  }).isRequired,
 };
 
 AlertsView.defaultProps = {

@@ -286,8 +286,9 @@ perf.controller('AlertsCtrl', [
             });
 
             $q.all(Object.keys(resultSetToSummaryMap).map(async repo => {
-                // TODO utilize failureStatus from PushModel.getList for error handling
-                const { data } = await PushModel.getList({ repo, id__in: Object.keys(resultSetToSummaryMap[repo]).join(',') });
+                // TODO utilize failureStatus from PushModel.getList for error handling; set count param equal to length of id's
+                const push_ids = Object.keys(resultSetToSummaryMap[repo]);
+                const { data } = await PushModel.getList({ repo, id__in: push_ids.join(','), count: push_ids.length });
                 data.results.forEach((resultSet) => {
                     resultSet.dateStr = dateFilter(
                         resultSet.push_timestamp * 1000, thDateFormat);
@@ -344,6 +345,8 @@ perf.controller('AlertsCtrl', [
                 }
                 $scope.updateAlertVisibility();
             });
+            console.log(resultSetToSummaryMap);
+            console.log(alertSummaries)
         }
 
         $scope.getMoreAlertSummaries = function () {
