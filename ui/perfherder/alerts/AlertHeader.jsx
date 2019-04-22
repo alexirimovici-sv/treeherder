@@ -8,42 +8,51 @@ import {
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 
+import RepositoryModel from '../../models/repository';
 import { getIssueTrackerUrl, getTitle } from '../helpers';
+import { getJobsUrl } from '../../helpers/url';
 
-const AlertHeader = ({ alertSummary }) => (
-  <div className="pl-2">
-    <a
-      className="text-dark font-weight-bold align-middle"
-      href={`#/alerts?id=${alertSummary.id}`}
-    >
-      Alert #{alertSummary.id} - {alertSummary.repository} -{' '}
-      {getTitle(alertSummary)}{' '}
-      <FontAwesomeIcon icon={faExternalLinkAlt} className="icon-superscript" />
-    </a>
-    <br />
-    {alertSummary.resultSetMetadata && (
+const AlertHeader = ({ alertSummary, repos }) => {
+  const repo = repos.find(repo => repo.name === alertSummary.repository);
+  const repoModel = new RepositoryModel(repo);
+
+  return (
+    <div className="pl-2">
+      <a
+        className="text-dark font-weight-bold align-middle"
+        href={`#/alerts?id=${alertSummary.id}`}
+      >
+        Alert #{alertSummary.id} - {alertSummary.repository} -{' '}
+        {getTitle(alertSummary)}{' '}
+        <FontAwesomeIcon
+          icon={faExternalLinkAlt}
+          className="icon-superscript"
+        />
+      </a>
+      <br />
       <span className="font-weight-normal">
-        <span className="align-middle">{`${
-          alertSummary.resultSetMetadata.dateStr
-        } · `}</span>
-        {/* TODO replace title with a tooltip? */}
-        <UncontrolledDropdown
-          tag="span"
-          title={alertSummary.resultSetMetadata.comments}
-        >
+        <span className="align-middle">{`${moment(
+          alertSummary.push_timestamp * 1000,
+        ).format('EEE MMM d, HH:mm:ss')} · `}</span>
+        <UncontrolledDropdown tag="span">
           <DropdownToggle
             className="btn-link text-info p-0"
             color="transparent"
             caret
           >
-            {alertSummary.resultSetMetadata.revision.slice(0, 12)}
+            {alertSummary.revision.slice(0, 12)}
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem>
               <a
                 className="text-dark"
-                href={alertSummary.jobsURL}
+                href={getJobsUrl({
+                  repo: alertSummary.repository,
+                  fromchange: alertSummary.prev_push_revision,
+                  tochange: alertSummary.revision,
+                })}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -53,7 +62,10 @@ const AlertHeader = ({ alertSummary }) => (
             <DropdownItem>
               <a
                 className="text-dark"
-                href={alertSummary.pushlogURL}
+                href={repoModel.getPushLogRangeHref({
+                  fromchange: alertSummary.prev_push_revision,
+                  tochange: alertSummary.revision,
+                })}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -76,12 +88,13 @@ const AlertHeader = ({ alertSummary }) => (
           </span>
         )}
       </span>
-    )}
-  </div>
-);
+    </div>
+  );
+};
 
 AlertHeader.propTypes = {
   alertSummary: PropTypes.shape({}).isRequired,
+  repos: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 export default AlertHeader;

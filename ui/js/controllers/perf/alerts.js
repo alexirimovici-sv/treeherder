@@ -345,8 +345,8 @@ perf.controller('AlertsCtrl', [
                 }
                 $scope.updateAlertVisibility();
             });
-            console.log(resultSetToSummaryMap);
-            console.log(alertSummaries)
+            // console.log(resultSetToSummaryMap);
+            // console.log(alertSummaries)
         }
 
         $scope.getMoreAlertSummaries = function () {

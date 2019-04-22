@@ -135,11 +135,8 @@ export default class AlertsViewControls extends React.Component {
 
 AlertsViewControls.propTypes = {
   validated: PropTypes.shape({}).isRequired,
-  dropdownOptions: PropTypes.arrayOf(
-    PropTypes.shape({})
-  ),
+  dropdownOptions: PropTypes.arrayOf(PropTypes.shape({})),
 };
-
 
 AlertsViewControls.defaultProps = {
   dropdownOptions: null,

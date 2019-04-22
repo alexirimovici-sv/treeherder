@@ -14,6 +14,7 @@ import { getData } from '../../helpers/http';
 import ErrorMessages from '../../shared/ErrorMessages';
 
 import AlertsViewControls from './AlertsViewControls';
+import AlertTable from './AlertTable';
 
 // TODO remove $stateParams and $state after switching to react router
 export class AlertsView extends React.Component {
@@ -30,6 +31,10 @@ export class AlertsView extends React.Component {
     };
   }
 
+  // TODO replace usage of resultSetMetadata in AlertHeader and AlertTableRow
+  // .dateStr and .timeRange can be determined with functions
+  // add a prevRevision property to alertSummary
+
   // TODO need to add alert validation to Validation component
   // if ($stateParams.id) {
   //   $scope.alertId = $stateParams.id;
@@ -40,12 +45,6 @@ export class AlertsView extends React.Component {
   componentDidMount() {
     this.fetchAlertSummaries();
   }
-
-  //     function (data) {
-  //         addAlertSummaries(data.results, data.next);
-  //         $scope.alertSummaryCurrentPage = $scope.filterOptions.page;
-  //         $scope.alertSummaryCount = data.count;
-  // });
 
   getDefaultStatus = () => {
     const { validated } = this.props;
@@ -88,15 +87,16 @@ export class AlertsView extends React.Component {
     if (failureStatus) {
       updates.errorMessages = [`Failure fetching alert summary data. ${data}`];
     } else {
-      updates.data = data;
+      updates.data = data.results || [];
     }
+
     this.setState(updates);
   }
 
   render() {
     const { user, validated } = this.props;
-    const { framework, status, errorMessages, loading } = this.state;
-    const { frameworks } = validated;
+    const { framework, status, errorMessages, loading, data } = this.state;
+    const { frameworks, projects } = validated;
 
     const frameworkNames =
       frameworks && frameworks.length ? frameworks.map(item => item.name) : [];
@@ -140,6 +140,16 @@ export class AlertsView extends React.Component {
           </Alert>
         )}
         <AlertsViewControls {...this.props} dropdownOptions={alertDropdowns} />
+        {data.length > 0 &&
+          data.map(alertSummary => (
+            <AlertTable
+              key={alertSummary.id}
+              alertSummary={alertSummary}
+              user={user}
+              repos={projects}
+              alertSummaries={data}
+            />
+          ))}
       </Container>
     );
   }
