@@ -182,6 +182,7 @@ export class AlertsView extends React.Component {
               user={user}
               repos={projects}
               alertSummaries={alertSummaries}
+              issueTrackers={issueTrackers}
             />
           ))}
       </Container>

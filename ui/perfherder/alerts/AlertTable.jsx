@@ -22,6 +22,7 @@ export default class AlertTable extends React.Component {
     };
   }
 
+ // TODO call getInitializedAlerts(alert, optionCollectionMap) to create title on each alert
   componentDidMount() {
     this.getDownstreamList();
   }
