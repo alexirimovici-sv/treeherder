@@ -181,9 +181,9 @@ export class AlertsView extends React.Component {
               key={alertSummary.id}
               alertSummary={alertSummary}
               user={user}
-              repos={projects}
               alertSummaries={alertSummaries}
               issueTrackers={issueTrackers}
+              {...this.props}
             />
           ))}
       </Container>

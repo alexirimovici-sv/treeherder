@@ -33,17 +33,15 @@ export default class NotesModal extends React.Component {
   editNotes = async event => {
     event.preventDefault();
 
-    const { alertSummary, toggle, $rootScope } = this.props;
+    const { alertSummary, toggle, updateState } = this.props;
     const { inputValue } = this.state;
 
     await update(getApiUrl(`${endpoints.alertSummary}${alertSummary.id}/`), {
       notes: inputValue,
     });
-    // TODO originalNotes and notesChanged might not be needed since they're used for comparison purposes
-    // alertSummary.originalNotes = alertSummary.notes;
-    // alertSummary.notesChanged = false;
+
     alertSummary.notes = inputValue;
-    $rootScope.$apply();
+    updateState({ alertSummary });
     toggle();
   };
 
@@ -90,5 +88,5 @@ NotesModal.propTypes = {
   alertSummary: PropTypes.shape({
     notes: PropTypes.string,
   }).isRequired,
-  $rootScope: PropTypes.shape({}).isRequired,
+  updateState: PropTypes.func.isRequired,
 };

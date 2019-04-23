@@ -82,7 +82,7 @@ export default class AlertTable extends React.Component {
   };
 
   render() {
-    const { user, repos, alertSummaries } = this.props;
+    const { user, validated, alertSummaries, issueTrackers } = this.props;
     const { alertSummary, downstreamIds, showNotes } = this.state;
 
     const downstreamIdsLength = downstreamIds.length;
@@ -104,20 +104,18 @@ export default class AlertTable extends React.Component {
                         disabled={!user.isStaff}
                         onClick={this.selectAlerts}
                       />
-                      <AlertHeader alertSummary={alertSummary} repos={repos} />
+                      <AlertHeader alertSummary={alertSummary} repos={validated.projects} />
                     </Label>
                   </FormGroup>
                 </th>
                 <th className="table-width-sm align-top font-weight-normal">
-                  {/* <StatusDropdown
+                  <StatusDropdown
                     alertSummary={alertSummary}
-                    repos={repos}
                     user={user}
-                    $rootScope={$rootScope}
-                    updateAlertSummary={alertSummary =>
-                      this.setState({ alertSummary })
-                    }
-                  /> */}
+                    updateState={(state) => this.setState(state)}
+                    repos={validated.projects}
+                    issueTrackers={issueTrackers}
+                  />
                 </th>
               </tr>
             </thead>
@@ -174,12 +172,13 @@ export default class AlertTable extends React.Component {
 AlertTable.propTypes = {
   alertSummary: PropTypes.shape({}),
   user: PropTypes.shape({}),
-  repos: PropTypes.arrayOf(PropTypes.shape({})),
+  validated: PropTypes.shape({
+    projects: PropTypes.arrayOf(PropTypes.shape({})),
+  }).isRequired,
   alertSummaries: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 AlertTable.defaultProps = {
   alertSummary: null,
   user: null,
-  repos: null,
 };

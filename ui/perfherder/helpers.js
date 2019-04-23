@@ -397,7 +397,7 @@ export const getGraphsURL = (
 
   return url;
 };
-
+// TODO remove
 export const getSubtestsURL = (alert, alertSummary) => {
   const urlParameters = {
     framework: alertSummary.framework,
@@ -405,14 +405,9 @@ export const getSubtestsURL = (alert, alertSummary) => {
     originalSignature: alert.series_signature.id,
     newProject: alertSummary.repository,
     newSignature: alert.series_signature.id,
+    originalRevision: alertSummary.prev_push_revision,
+    newRevision: alertSummary.revision,
   };
-  if (alertSummary.prevResultSetMetadata) {
-    urlParameters.originalRevision =
-      alertSummary.prevResultSetMetadata.revision;
-  }
-  if (alertSummary.prevResultSetMetadata) {
-    urlParameters.newRevision = alertSummary.resultSetMetadata.revision;
-  }
 
   return `#/comparesubtest${createQueryParams(urlParameters)}`;
 };
@@ -469,7 +464,7 @@ export const AlertSummary = async (alertSummaryData, optionCollectionMap) => {
     issueTrackers,
   );
 };
-
+// TODO remove
 export const getIssueTrackerUrl = alertSummary => {
   if (!alertSummary.bug_number) {
     return;
