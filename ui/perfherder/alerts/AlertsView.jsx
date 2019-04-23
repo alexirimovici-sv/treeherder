@@ -7,7 +7,7 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 import perf from '../../js/perf';
 import withValidation from '../Validation';
-import { convertParams, getFrameworkData, getStatus } from '../helpers';
+import { convertParams, getFrameworkData, getStatus, processResponse } from '../helpers';
 import { alertSummaryStatus, endpoints } from '../constants';
 import { createQueryParams, getApiUrl } from '../../helpers/url';
 import { getData } from '../../helpers/http';
@@ -26,14 +26,12 @@ export class AlertsView extends React.Component {
       framework: getFrameworkData(this.validated),
       page: this.validated.page ? parseInt(this.validated.page, 10) : 1,
       errorMessages: [],
-      data: [],
+      alertSummaries: {},
+      issueTrackers: [],
       loading: true,
     };
   }
 
-  // TODO replace usage of resultSetMetadata in AlertHeader and AlertTableRow
-  // .dateStr and .timeRange can be determined with functions
-  // add a prevRevision property to alertSummary
 
   // TODO need to add alert validation to Validation component
   // if ($stateParams.id) {
@@ -45,6 +43,7 @@ export class AlertsView extends React.Component {
   componentDidMount() {
     this.fetchAlertSummaries();
   }
+  // TODO send data to tableControls to filter summaries
 
   getDefaultStatus = () => {
     const { validated } = this.props;
@@ -71,8 +70,21 @@ export class AlertsView extends React.Component {
     this.setState({ status });
   };
 
+  // export const AlertSummary = async (alertSummaryData, optionCollectionMap) => {
+  //   if (issueTrackers === undefined) {
+  //     return getData(getApiUrl(endpoints.issueTrackers)).then(
+  //       ({ data: issueTrackerList }) => {
+  //         issueTrackers = issueTrackerList;
+  //         return constructAlertSummary(
+  //           alertSummaryData,
+  //           optionCollectionMap,
+  //           issueTrackers,
+  //         );
+  //       },
+  //     );
+  //   }
   async fetchAlertSummaries() {
-    const { framework, status, page } = this.state;
+    const { framework, status, page, errorMessages } = this.state;
 
     const url = getApiUrl(
       `${endpoints.alertSummary}${createQueryParams({
@@ -81,21 +93,26 @@ export class AlertsView extends React.Component {
         page,
       })}`,
     );
-    const { data, failureStatus } = await getData(url);
-    const updates = { loading: false };
-
-    if (failureStatus) {
-      updates.errorMessages = [`Failure fetching alert summary data. ${data}`];
-    } else {
-      updates.data = data.results || [];
-    }
+    const [alertSummaries, issueTrackers] = await Promise.all([getData(url), getData(getApiUrl(endpoints.issueTrackers))]);
+    const updates = {
+      loading: false,
+      ...processResponse(alertSummaries, 'alertSummaries', errorMessages),
+      ...processResponse(issueTrackers, 'issueTrackers', errorMessages),
+    };
 
     this.setState(updates);
   }
+// TODO - optioncollection map data is needed and after alertSummaries is received
+// we need to construct a special title for each alert - do this in the AlertsTable.
+  // const alertSummaries = constructAlertSummary(
+  //   alertSummaryData,
+  //   optionCollectionMap,
+  //   issueTrackers,
+  // );
 
   render() {
     const { user, validated } = this.props;
-    const { framework, status, errorMessages, loading, data } = this.state;
+    const { framework, status, errorMessages, loading, alertSummaries } = this.state;
     const { frameworks, projects } = validated;
 
     const frameworkNames =
@@ -140,14 +157,14 @@ export class AlertsView extends React.Component {
           </Alert>
         )}
         <AlertsViewControls {...this.props} dropdownOptions={alertDropdowns} />
-        {data.length > 0 &&
-          data.map(alertSummary => (
+        {Object.keys(alertSummaries).length > 0 &&
+          alertSummaries.results.map(alertSummary => (
             <AlertTable
               key={alertSummary.id}
               alertSummary={alertSummary}
               user={user}
               repos={projects}
-              alertSummaries={data}
+              alertSummaries={alertSummaries}
             />
           ))}
       </Container>

@@ -14,6 +14,7 @@ import RepositoryModel from '../../models/repository';
 import { getIssueTrackerUrl, getTitle } from '../helpers';
 import { getJobsUrl } from '../../helpers/url';
 
+// TODO refactor getIssueTracker URL - issue trackers being fetched in Alerts View
 const AlertHeader = ({ alertSummary, repos }) => {
   const repo = repos.find(repo => repo.name === alertSummary.repository);
   const repoModel = new RepositoryModel(repo);
@@ -35,7 +36,7 @@ const AlertHeader = ({ alertSummary, repos }) => {
       <span className="font-weight-normal">
         <span className="align-middle">{`${moment(
           alertSummary.push_timestamp * 1000,
-        ).format('EEE MMM d, HH:mm:ss')} · `}</span>
+        ).format('ddd MMM d, HH:mm:ss')} · `}</span>
         <UncontrolledDropdown tag="span">
           <DropdownToggle
             className="btn-link text-info p-0"
@@ -77,14 +78,14 @@ const AlertHeader = ({ alertSummary, repos }) => {
         {alertSummary.bug_number && (
           <span>
             <span className="align-middle"> · </span>
-            <a
+            {/* <a
               className="text-info align-middle"
               href={getIssueTrackerUrl(alertSummary)}
               target="_blank"
               rel="noopener noreferrer"
             >
               {`Bug ${alertSummary.bug_number}`}
-            </a>
+            </a> */}
           </span>
         )}
       </span>

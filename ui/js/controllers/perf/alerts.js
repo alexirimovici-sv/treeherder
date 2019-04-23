@@ -255,7 +255,7 @@ perf.controller('AlertsCtrl', [
                     });
                 });
         };
-
+        // TODO this has been replaced
         function addAlertSummaries(alertSummaries, getMoreAlertSummariesHref) {
             $scope.getMoreAlertSummariesHref = getMoreAlertSummariesHref;
 
@@ -346,7 +346,7 @@ perf.controller('AlertsCtrl', [
                 $scope.updateAlertVisibility();
             });
             // console.log(resultSetToSummaryMap);
-            // console.log(alertSummaries)
+            console.log(alertSummaries)
         }
 
         $scope.getMoreAlertSummaries = function () {
@@ -417,7 +417,7 @@ perf.controller('AlertsCtrl', [
         $scope.phAlertSummaryStatusMap = phAlertSummaryStatusMap;
         $scope.getIssueTrackerUrl = getIssueTrackerUrl;
         $scope.getTextualSummary = getTextualSummary;
-
+        // TODO this was fetched  and replaced by Validation component
         RepositoryModel.getList().then((repos) => {
             $rootScope.repos = repos;
             $q.all([getData(getApiUrl(endpoints.frameworks)).then(({ data: frameworks }) => {

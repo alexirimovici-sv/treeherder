@@ -227,6 +227,7 @@ AlertTableRow.propTypes = {
   alert: PropTypes.shape({
     starred: PropTypes.bool,
   }).isRequired,
+  timeRange: PropTypes.number.isRequired,
 };
 
 AlertTableRow.defaultProps = {

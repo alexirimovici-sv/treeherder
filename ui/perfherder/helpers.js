@@ -740,3 +740,11 @@ export const getFrameworkData = props => {
 
 export const getStatus = status =>
   Object.entries(alertSummaryStatus).find(item => status === item[1])[0];
+
+export const processResponse = (response, state, errorMessages) => {
+  const { data, failureStatus } = response;
+  if (failureStatus) {
+    return { errorMessages: [...errorMessages, ...data] };
+  }
+  return { [state]: data };
+};
