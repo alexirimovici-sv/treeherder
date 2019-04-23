@@ -133,7 +133,7 @@ export default class AlertTableRow extends React.Component {
       originalRevision: alertSummary.prev_push_revision,
       newRevision: alertSummary.revision,
     };
-  
+
     return `#/comparesubtest${createQueryParams(urlParameters)}`;
   };
 

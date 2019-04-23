@@ -7,6 +7,7 @@ import {
   phDefaultTimeRangeValue,
   phTimeRanges,
 } from '../../helpers/constants';
+import RepositoryModel from '../../models/repository';
 
 import AlertHeader from './AlertHeader';
 import StatusDropdown from './StatusDropdown';
@@ -86,6 +87,10 @@ export default class AlertTable extends React.Component {
     const { alertSummary, downstreamIds, showNotes } = this.state;
 
     const downstreamIdsLength = downstreamIds.length;
+    const repo = validated.projects.find(
+      repo => repo.name === alertSummary.repository,
+    );
+    const repoModel = new RepositoryModel(repo);
 
     return (
       <Container fluid className="px-0">
@@ -104,7 +109,10 @@ export default class AlertTable extends React.Component {
                         disabled={!user.isStaff}
                         onClick={this.selectAlerts}
                       />
-                      <AlertHeader alertSummary={alertSummary} repos={validated.projects} />
+                      <AlertHeader
+                        alertSummary={alertSummary}
+                        repoModel={repoModel}
+                      />
                     </Label>
                   </FormGroup>
                 </th>
@@ -112,8 +120,8 @@ export default class AlertTable extends React.Component {
                   <StatusDropdown
                     alertSummary={alertSummary}
                     user={user}
-                    updateState={(state) => this.setState(state)}
-                    repos={validated.projects}
+                    updateState={state => this.setState(state)}
+                    repoModel={repoModel}
                     issueTrackers={issueTrackers}
                   />
                 </th>
@@ -176,9 +184,11 @@ AlertTable.propTypes = {
     projects: PropTypes.arrayOf(PropTypes.shape({})),
   }).isRequired,
   alertSummaries: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})),  
 };
 
 AlertTable.defaultProps = {
   alertSummary: null,
   user: null,
+  issueTrackers: [],
 };

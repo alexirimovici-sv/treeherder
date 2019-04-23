@@ -131,7 +131,7 @@ export class AlertsView extends React.Component {
       alertSummaries,
       issueTrackers,
     } = this.state;
-    const { frameworks, projects } = validated;
+    const { frameworks } = validated;
 
     const frameworkNames =
       frameworks && frameworks.length ? frameworks.map(item => item.name) : [];

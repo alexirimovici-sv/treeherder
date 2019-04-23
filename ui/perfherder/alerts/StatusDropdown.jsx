@@ -33,7 +33,7 @@ export default class StatusDropdown extends React.Component {
   }
 
   fileBug = async () => {
-    const { alertSummary, repos} = this.props;
+    const { alertSummary, repoModel } = this.props;
     // TODO it seems like it'd make more sense to fetch this once and customize/cache it for future use rather than
     // fetching this template each time someone clicks on 'file bug' - regardless of test framework
     const { data, failureStatus } = await getData(
@@ -43,12 +43,8 @@ export default class StatusDropdown extends React.Component {
     );
     if (!failureStatus) {
       const result = data[0];
-      const repo = repos.find(repo => repo.name === alertSummary.repository);
-
       const templateArgs = {
-        revisionHref: repo.getPushLogHref(
-          alertSummary.revision,
-        ),
+        revisionHref: repoModel.getPushLogHref(alertSummary.revision),
         alertHref: `${window.location.origin}/perf.html#/alerts?id=${
           alertSummary.id
         }`,
@@ -59,9 +55,9 @@ export default class StatusDropdown extends React.Component {
       const fillTemplate = template(result.text);
       const commentText = fillTemplate(templateArgs);
 
-      const pushDate = moment(
-        alertSummary.push_timestamp * 1000,
-      ).format('ddd MMMM D YYYY');
+      const pushDate = moment(alertSummary.push_timestamp * 1000).format(
+        'ddd MMMM D YYYY',
+      );
 
       const bugTitle = `${getTitle(alertSummary)} regression on push ${
         alertSummary.revision
@@ -234,6 +230,10 @@ StatusDropdown.propTypes = {
   alertSummary: PropTypes.shape({}).isRequired,
   user: PropTypes.shape({}).isRequired,
   updateState: PropTypes.func.isRequired,
-  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  repos: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})),
+  repoModel: PropTypes.shape({}).isRequired,
+};
+
+StatusDropdown.defaultProps = {
+  issueTrackers: [],
 };
