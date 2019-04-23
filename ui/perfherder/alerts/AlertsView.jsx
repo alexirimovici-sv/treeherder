@@ -129,6 +129,7 @@ export class AlertsView extends React.Component {
       errorMessages,
       loading,
       alertSummaries,
+      issueTrackers,
     } = this.state;
     const { frameworks, projects } = validated;
 

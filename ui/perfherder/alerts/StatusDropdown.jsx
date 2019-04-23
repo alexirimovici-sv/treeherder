@@ -122,11 +122,7 @@ export default class StatusDropdown extends React.Component {
 
   render() {
     const { alertSummary, user, $rootScope, issueTrackers } = this.props;
-    const {
-      showBugModal,
-      issueTrackersError,
-      showNotesModal,
-    } = this.state;
+    const { showBugModal, issueTrackersError, showNotesModal } = this.state;
     // TODO should this move to state?
     const alertStatus = getStatus(alertSummary.status);
 
@@ -241,5 +237,5 @@ StatusDropdown.propTypes = {
   user: PropTypes.shape({}).isRequired,
   $rootScope: PropTypes.shape({}).isRequired,
   updateAlertSummary: PropTypes.func.isRequired,
-  issueTrackers: PropTypes.array(PropTypes.shape({})).isRequired,
+  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };

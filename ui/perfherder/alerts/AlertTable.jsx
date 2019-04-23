@@ -19,10 +19,11 @@ export default class AlertTable extends React.Component {
     this.state = {
       alertSummary: this.props.alertSummary,
       downstreamIds: [],
+      showNotes: false,
     };
   }
 
- // TODO call getInitializedAlerts(alert, optionCollectionMap) to create title on each alert
+  // TODO call getInitializedAlerts(alert, optionCollectionMap) to create title on each alert
   componentDidMount() {
     this.getDownstreamList();
   }
@@ -82,7 +83,7 @@ export default class AlertTable extends React.Component {
 
   render() {
     const { user, repos, alertSummaries } = this.props;
-    const { alertSummary, downstreamIds } = this.state;
+    const { alertSummary, downstreamIds, showNotes } = this.state;
 
     const downstreamIdsLength = downstreamIds.length;
 
@@ -146,6 +147,19 @@ export default class AlertTable extends React.Component {
                         position={downstreamIdsLength - 1 - index}
                       />
                     ))}
+                  </td>
+                </tr>
+              )}
+              {alertSummary.notes && (
+                <tr>
+                  <td colSpan="8" className="text-left text-muted pl-3 py-4">
+                    <span
+                      className="text-bold text-info"
+                      onClick={() => this.setState({ showNotes: !showNotes })}
+                    >
+                      {`${showNotes ? 'Hide ' : 'Show '}`}notes{' '}
+                    </span>
+                    {showNotes && <span>{alertSummary.notes}</span>}
                   </td>
                 </tr>
               )}
