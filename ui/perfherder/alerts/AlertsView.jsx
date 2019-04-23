@@ -7,11 +7,17 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 import perf from '../../js/perf';
 import withValidation from '../Validation';
-import { convertParams, getFrameworkData, getStatus, processResponse } from '../helpers';
+import {
+  convertParams,
+  getFrameworkData,
+  getStatus,
+  processResponse,
+} from '../helpers';
 import { alertSummaryStatus, endpoints } from '../constants';
 import { createQueryParams, getApiUrl } from '../../helpers/url';
 import { getData } from '../../helpers/http';
 import ErrorMessages from '../../shared/ErrorMessages';
+import OptionCollectionModel from '../../models/optionCollection';
 
 import AlertsViewControls from './AlertsViewControls';
 import AlertTable from './AlertTable';
@@ -26,12 +32,12 @@ export class AlertsView extends React.Component {
       framework: getFrameworkData(this.validated),
       page: this.validated.page ? parseInt(this.validated.page, 10) : 1,
       errorMessages: [],
-      alertSummaries: {},
+      alertSummaries: [],
       issueTrackers: [],
       loading: true,
+      optionCollectionMap: null,
     };
   }
-
 
   // TODO need to add alert validation to Validation component
   // if ($stateParams.id) {
@@ -70,22 +76,17 @@ export class AlertsView extends React.Component {
     this.setState({ status });
   };
 
-  // export const AlertSummary = async (alertSummaryData, optionCollectionMap) => {
-  //   if (issueTrackers === undefined) {
-  //     return getData(getApiUrl(endpoints.issueTrackers)).then(
-  //       ({ data: issueTrackerList }) => {
-  //         issueTrackers = issueTrackerList;
-  //         return constructAlertSummary(
-  //           alertSummaryData,
-  //           optionCollectionMap,
-  //           issueTrackers,
-  //         );
-  //       },
-  //     );
-  //   }
+  // TODO potentially pass as a prop for testing purposes
   async fetchAlertSummaries() {
-    const { framework, status, page, errorMessages } = this.state;
-
+    const {
+      framework,
+      status,
+      page,
+      errorMessages,
+      issueTrackers,
+      optionCollectionMap,
+    } = this.state;
+    let updates = { loading: false };
     const url = getApiUrl(
       `${endpoints.alertSummary}${createQueryParams({
         framework: framework.id,
@@ -93,26 +94,42 @@ export class AlertsView extends React.Component {
         page,
       })}`,
     );
-    const [alertSummaries, issueTrackers] = await Promise.all([getData(url), getData(getApiUrl(endpoints.issueTrackers))]);
-    const updates = {
-      loading: false,
-      ...processResponse(alertSummaries, 'alertSummaries', errorMessages),
-      ...processResponse(issueTrackers, 'issueTrackers', errorMessages),
-    };
+    // TODO OptionCollectionModel to use getData wrapper
+    if (!issueTrackers.length && !optionCollectionMap) {
+      const [optionCollectionMap, issueTrackers] = await Promise.all([
+        OptionCollectionModel.getMap(),
+        getData(getApiUrl(endpoints.issueTrackers)),
+      ]);
 
+      updates = {
+        ...updates,
+        ...{ optionCollectionMap },
+        ...processResponse(issueTrackers, 'issueTrackers', errorMessages),
+      };
+    }
+    const data = await getData(url);
+    const response = processResponse(data, 'alertSummaries', errorMessages);
+
+    if (response.alertSummaries) {
+      updates = {
+        ...updates,
+        ...{ alertSummaries: response.alertSummaries.results },
+      };
+    } else {
+      updates = { ...updates, ...response };
+    }
     this.setState(updates);
   }
-// TODO - optioncollection map data is needed and after alertSummaries is received
-// we need to construct a special title for each alert - do this in the AlertsTable.
-  // const alertSummaries = constructAlertSummary(
-  //   alertSummaryData,
-  //   optionCollectionMap,
-  //   issueTrackers,
-  // );
 
   render() {
     const { user, validated } = this.props;
-    const { framework, status, errorMessages, loading, alertSummaries } = this.state;
+    const {
+      framework,
+      status,
+      errorMessages,
+      loading,
+      alertSummaries,
+    } = this.state;
     const { frameworks, projects } = validated;
 
     const frameworkNames =
@@ -157,8 +174,8 @@ export class AlertsView extends React.Component {
           </Alert>
         )}
         <AlertsViewControls {...this.props} dropdownOptions={alertDropdowns} />
-        {Object.keys(alertSummaries).length > 0 &&
-          alertSummaries.results.map(alertSummary => (
+        {alertSummaries.length > 0 &&
+          alertSummaries.map(alertSummary => (
             <AlertTable
               key={alertSummary.id}
               alertSummary={alertSummary}

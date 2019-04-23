@@ -635,6 +635,7 @@ export const getAlertSummary = id =>
 export const getAlertSummaryTitle = id =>
   getAlertSummary(id).then(alertSummary => getTitle(alertSummary));
 
+// TODO remove
 export const getAlertSummaries = options => {
   let { href } = options;
   if (!options || !options.href) {

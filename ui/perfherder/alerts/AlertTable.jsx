@@ -44,7 +44,7 @@ export default class AlertTable extends React.Component {
           .reduce((a, b) => [...a, ...b], []),
       ),
     ];
-    console.log(downstreamIds);
+
     this.setState({ downstreamIds });
   };
 
@@ -75,7 +75,7 @@ export default class AlertTable extends React.Component {
           value => Date.now() / 1000.0 - alertSummary.push_timestamp < value,
         ),
     );
-    console.log(timeRange);
+
     return timeRange;
   };
 
