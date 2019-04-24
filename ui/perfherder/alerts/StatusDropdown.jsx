@@ -116,14 +116,14 @@ export default class StatusDropdown extends React.Component {
     (alertStatus !== status && this.isResolved(alertStatus));
 
   render() {
-    const { alertSummary, user, issueTrackers, updateState } = this.props;
-    const { showBugModal, issueTrackersError, showNotesModal } = this.state;
-    // TODO should this move to state?
+    const { alertSummary, user, issueTrackers } = this.props;
+    const { showBugModal, showNotesModal } = this.state;
+
     const alertStatus = getStatus(alertSummary.status);
 
     return (
       <React.Fragment>
-        {!issueTrackersError && (
+        {issueTrackers.length > 0 && (
           <BugModal
             showModal={showBugModal}
             toggle={() => this.toggle('showBugModal')}
@@ -136,7 +136,7 @@ export default class StatusDropdown extends React.Component {
           showModal={showNotesModal}
           toggle={() => this.toggle('showNotesModal')}
           alertSummary={alertSummary}
-          updateState={updateState}
+          updateAndClose={this.updateAndClose}
         />
         <UncontrolledDropdown tag="span">
           <DropdownToggle

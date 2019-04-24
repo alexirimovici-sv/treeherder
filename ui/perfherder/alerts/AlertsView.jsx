@@ -7,11 +7,7 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 import perf from '../../js/perf';
 import withValidation from '../Validation';
-import {
-  convertParams,
-  getFrameworkData,
-  getStatus,
-} from '../helpers';
+import { convertParams, getFrameworkData, getStatus } from '../helpers';
 import { alertSummaryStatus, endpoints } from '../constants';
 import { createQueryParams, getApiUrl } from '../../helpers/url';
 import { getData, processResponse } from '../../helpers/http';

@@ -121,7 +121,9 @@ export default class AlertTable extends React.Component {
                   <StatusDropdown
                     alertSummary={alertSummary}
                     user={user}
-                    updateState={state => this.setState(state)}
+                    updateState={alertSummary =>
+                      this.setState({ alertSummary })
+                    }
                     repoModel={repoModel}
                     issueTrackers={issueTrackers}
                   />
