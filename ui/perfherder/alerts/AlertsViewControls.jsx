@@ -24,7 +24,7 @@ export default class AlertsViewControls extends React.Component {
 
   render() {
     const { hideImprovements, hideDownstream } = this.state;
-    const { dropdownOptions } = this.props;
+    const { dropdownOptions, render } = this.props;
     const alertFilters = [
       {
         text: 'Hide improvements',
@@ -39,12 +39,15 @@ export default class AlertsViewControls extends React.Component {
     ];
 
     return (
-      <FilterControls
-        dropdownOptions={dropdownOptions}
-        filterOptions={alertFilters}
-        updateFilter={(filter) => this.setState(prevState => ({ [filter]: !prevState[filter] }))}
-        updateFilterText={(filterText) => this.setState({ filterText })}
-      />
+      <React.Fragment>
+        <FilterControls
+          dropdownOptions={dropdownOptions}
+          filterOptions={alertFilters}
+          updateFilter={(filter) => this.setState(prevState => ({ [filter]: !prevState[filter] }))}
+          updateFilterText={(filterText) => this.setState({ filterText })}
+        />
+        {render(this.state)}
+      </React.Fragment>
     );
   }
 }
@@ -52,6 +55,7 @@ export default class AlertsViewControls extends React.Component {
 AlertsViewControls.propTypes = {
   validated: PropTypes.shape({}).isRequired,
   dropdownOptions: PropTypes.arrayOf(PropTypes.shape({})),
+  render: PropTypes.func.isRequired,
 };
 
 AlertsViewControls.defaultProps = {

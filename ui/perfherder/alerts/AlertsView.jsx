@@ -171,19 +171,24 @@ export class AlertsView extends React.Component {
             make changes
           </Alert>
         )}
-        <AlertsViewControls {...this.props} dropdownOptions={alertDropdowns} />
-        {alertSummaries.length > 0 &&
-          alertSummaries.map(alertSummary => (
-            <AlertTable
-              key={alertSummary.id}
-              alertSummary={alertSummary}
-              user={user}
-              alertSummaries={alertSummaries}
-              issueTrackers={issueTrackers}
-              {...this.props}
-              optionCollectionMap={optionCollectionMap}
-            />
-          ))}
+        <AlertsViewControls 
+          validated={validated} 
+          dropdownOptions={alertDropdowns}
+          render={state =>
+            alertSummaries.length > 0 &&
+            alertSummaries.map(alertSummary => (
+              <AlertTable
+                filters={state}
+                key={alertSummary.id}
+                alertSummary={alertSummary}
+                user={user}
+                alertSummaries={alertSummaries}
+                issueTrackers={issueTrackers}
+                {...this.props}
+                optionCollectionMap={optionCollectionMap}
+              />
+            ))}
+          />
       </Container>
     );
   }
