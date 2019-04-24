@@ -167,10 +167,10 @@ export default class AlertTable extends React.Component {
                         showMoreNotes ? '' : 'text-truncate'
                       }`}
                     >
-                      {/* <span className="font-weight-bold">Notes: </span> */}
+                      <span className="font-weight-bold">Notes </span>
                       {alertSummary.notes}
                     </p>
-                    {alertSummary.notes.length > 174 && (
+                    {alertSummary.notes.length > 168 && (
                       <p
                         className="mb-0 text-right font-weight-bold text-info pointer"
                         onClick={() =>
