@@ -112,6 +112,7 @@ export default class AlertTable extends React.Component {
                       <AlertHeader
                         alertSummary={alertSummary}
                         repoModel={repoModel}
+                        issueTrackers={issueTrackers}
                       />
                     </Label>
                   </FormGroup>
@@ -184,7 +185,7 @@ AlertTable.propTypes = {
     projects: PropTypes.arrayOf(PropTypes.shape({})),
   }).isRequired,
   alertSummaries: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})),  
+  issueTrackers: PropTypes.arrayOf(PropTypes.shape({})),
 };
 
 AlertTable.defaultProps = {
