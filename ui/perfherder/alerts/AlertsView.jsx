@@ -11,11 +11,10 @@ import {
   convertParams,
   getFrameworkData,
   getStatus,
-  processResponse,
 } from '../helpers';
 import { alertSummaryStatus, endpoints } from '../constants';
 import { createQueryParams, getApiUrl } from '../../helpers/url';
-import { getData } from '../../helpers/http';
+import { getData, processResponse } from '../../helpers/http';
 import ErrorMessages from '../../shared/ErrorMessages';
 import OptionCollectionModel from '../../models/optionCollection';
 
@@ -34,7 +33,7 @@ export class AlertsView extends React.Component {
       errorMessages: [],
       alertSummaries: [],
       issueTrackers: [],
-      loading: true,
+      loading: false,
       optionCollectionMap: null,
     };
   }
@@ -66,18 +65,19 @@ export class AlertsView extends React.Component {
 
     updateParams({ framework: framework.id });
     // TODO fetch new data
-    this.setState({ framework });
+    this.setState({ framework }, () => this.fetchAlertSummaries());
   };
 
   updateStatus = status => {
     const statusId = alertSummaryStatus[status];
     this.props.validated.updateParams({ status: statusId });
     // TODO fetch new data, use statusId as param
-    this.setState({ status });
+    this.setState({ status }, () => this.fetchAlertSummaries());
   };
 
   // TODO potentially pass as a prop for testing purposes
   async fetchAlertSummaries() {
+    this.setState({ loading: true });
     const {
       framework,
       status,

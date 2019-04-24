@@ -145,7 +145,7 @@ export default class AlertTable extends React.Component {
               {downstreamIdsLength > 0 && (
                 <tr>
                   <td colSpan="8" className="text-left text-muted pl-3 py-4">
-                    <span className="">Downstream alert summaries: </span>
+                    <span>Downstream alert summaries: </span>
                     {downstreamIds.map((id, index) => (
                       <DownstreamSummary
                         key={id}
