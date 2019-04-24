@@ -126,6 +126,7 @@ export class AlertsView extends React.Component {
       loading,
       alertSummaries,
       issueTrackers,
+      optionCollectionMap,
     } = this.state;
     const { frameworks } = validated;
 
@@ -180,6 +181,7 @@ export class AlertsView extends React.Component {
               alertSummaries={alertSummaries}
               issueTrackers={issueTrackers}
               {...this.props}
+              optionCollectionMap={optionCollectionMap}
             />
           ))}
       </Container>

@@ -8,6 +8,7 @@ import {
   phTimeRanges,
 } from '../../helpers/constants';
 import RepositoryModel from '../../models/repository';
+import { getInitializedAlerts } from '../helpers';
 
 import AlertHeader from './AlertHeader';
 import StatusDropdown from './StatusDropdown';
@@ -18,19 +19,21 @@ export default class AlertTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      alertSummary: this.props.alertSummary,
+      alertSummary: null,
       downstreamIds: [],
       showMoreNotes: false,
     };
   }
 
-  // TODO call getInitializedAlerts(alert, optionCollectionMap) to create title on each alert
   componentDidMount() {
-    this.getDownstreamList();
+    const { alertSummary, optionCollectionMap } = this.props;
+
+    alertSummary.alerts = getInitializedAlerts(alertSummary, optionCollectionMap);
+    this.setState({ alertSummary }, () => this.getDownstreamList());
   }
 
   getDownstreamList = () => {
-    const { alertSummary } = this.props;
+    const { alertSummary } = this.state;
 
     const downstreamIds = [
       ...new Set(
@@ -64,7 +67,7 @@ export default class AlertTable extends React.Component {
 
   // TODO move to alertTableRow
   getTimeRange = () => {
-    const { alertSummary } = this.props;
+    const { alertSummary } = this.state;
 
     const defaultTimeRange =
       alertSummary.repository === 'mozilla-beta'
@@ -87,14 +90,15 @@ export default class AlertTable extends React.Component {
     const { alertSummary, downstreamIds, showMoreNotes } = this.state;
 
     const downstreamIdsLength = downstreamIds.length;
-    const repo = validated.projects.find(
+    const repo = alertSummary ? validated.projects.find(
       repo => repo.name === alertSummary.repository,
-    );
+    ) : null;
     const repoModel = new RepositoryModel(repo);
 
     return (
       <Container fluid className="px-0 max-width-default">
         <Form>
+          {alertSummary &&
           <Table className="compare-table">
             <thead>
               <tr className="bg-lightgray">
@@ -145,9 +149,9 @@ export default class AlertTable extends React.Component {
                   ),
               )}
               {downstreamIdsLength > 0 && (
-                <tr>
+                <tr className="border">
                   <td colSpan="9" className="text-left text-muted pl-3 py-4">
-                    <span>Downstream alert summaries: </span>
+                    <span className="font-weight-bold">Downstream alert summaries: </span>
                     {downstreamIds.map((id, index) => (
                       <DownstreamSummary
                         key={id}
@@ -167,12 +171,12 @@ export default class AlertTable extends React.Component {
                         showMoreNotes ? '' : 'text-truncate'
                       }`}
                     >
-                      <span className="font-weight-bold">Notes </span>
+                      <span className="font-weight-bold">Notes: </span>
                       {alertSummary.notes}
                     </p>
-                    {alertSummary.notes.length > 168 && (
+                    {alertSummary.notes.length > 167 && (
                       <p
-                        className="mb-0 text-right font-weight-bold text-info pointer"
+                        className="mb-0 text-right text-info pointer"
                         onClick={() =>
                           this.setState({ showMoreNotes: !showMoreNotes })
                         }
@@ -184,7 +188,7 @@ export default class AlertTable extends React.Component {
                 </tr>
               )}
             </tbody>
-          </Table>
+          </Table>}
         </Form>
       </Container>
     );
@@ -199,6 +203,7 @@ AlertTable.propTypes = {
   }).isRequired,
   alertSummaries: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   issueTrackers: PropTypes.arrayOf(PropTypes.shape({})),
+  optionCollectionMap: PropTypes.shape({}).isRequired,
 };
 
 AlertTable.defaultProps = {
