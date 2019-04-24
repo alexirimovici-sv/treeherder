@@ -48,13 +48,15 @@ export default class NotesModal extends React.Component {
           <ModalFooter>
             <Button
               color="secondary"
-              onClick={event => updateAndClose(
-                event,
-                {
-                  notes: inputValue.length ? inputValue : null,
-                },
-                'showNotesModal',
-              )}
+              onClick={event =>
+                updateAndClose(
+                  event,
+                  {
+                    notes: inputValue.length ? inputValue : null,
+                  },
+                  'showNotesModal',
+                )
+              }
               disabled={inputValue === alertSummary.notes}
               type="submit"
             >

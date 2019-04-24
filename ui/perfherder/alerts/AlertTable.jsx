@@ -20,7 +20,7 @@ export default class AlertTable extends React.Component {
     this.state = {
       alertSummary: this.props.alertSummary,
       downstreamIds: [],
-      showNotes: false,
+      showMoreNotes: false,
     };
   }
 
@@ -84,7 +84,7 @@ export default class AlertTable extends React.Component {
 
   render() {
     const { user, validated, alertSummaries, issueTrackers } = this.props;
-    const { alertSummary, downstreamIds, showNotes } = this.state;
+    const { alertSummary, downstreamIds, showMoreNotes } = this.state;
 
     const downstreamIdsLength = downstreamIds.length;
     const repo = validated.projects.find(
@@ -93,7 +93,7 @@ export default class AlertTable extends React.Component {
     const repoModel = new RepositoryModel(repo);
 
     return (
-      <Container fluid className="px-0">
+      <Container fluid className="px-0 max-width-default">
         <Form>
           <Table className="compare-table">
             <thead>
@@ -146,7 +146,7 @@ export default class AlertTable extends React.Component {
               )}
               {downstreamIdsLength > 0 && (
                 <tr>
-                  <td colSpan="8" className="text-left text-muted pl-3 py-4">
+                  <td colSpan="9" className="text-left text-muted pl-3 py-4">
                     <span>Downstream alert summaries: </span>
                     {downstreamIds.map((id, index) => (
                       <DownstreamSummary
@@ -160,15 +160,26 @@ export default class AlertTable extends React.Component {
                 </tr>
               )}
               {alertSummary.notes && (
-                <tr>
-                  <td colSpan="8" className="text-left text-muted pl-3 py-4">
-                    <span
-                      className="text-bold text-info"
-                      onClick={() => this.setState({ showNotes: !showNotes })}
+                <tr className="border">
+                  <td colSpan="9" className="text-left text-muted  pl-3 py-4">
+                    <p
+                      className={`max-width-row-text ${
+                        showMoreNotes ? '' : 'text-truncate'
+                      }`}
                     >
-                      {`${showNotes ? 'Hide ' : 'Show '}`}notes{' '}
-                    </span>
-                    {showNotes && <span>{alertSummary.notes}</span>}
+                      {/* <span className="font-weight-bold">Notes: </span> */}
+                      {alertSummary.notes}
+                    </p>
+                    {alertSummary.notes.length > 174 && (
+                      <p
+                        className="mb-0 text-right font-weight-bold text-info pointer"
+                        onClick={() =>
+                          this.setState({ showMoreNotes: !showMoreNotes })
+                        }
+                      >
+                        {`show ${showMoreNotes ? 'less' : 'more'}`}
+                      </p>
+                    )}
                   </td>
                 </tr>
               )}
