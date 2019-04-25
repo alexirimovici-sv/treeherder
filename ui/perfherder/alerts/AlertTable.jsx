@@ -136,9 +136,8 @@ export default class AlertTable extends React.Component {
       .map(word => `(?=.*${word})`)
       .join('');
     const regex = RegExp(words, 'gi');
-    const text = `${
-      alert.title
-    } ${alert.bug_number.toString()} ${alert.revision.toString()}`;
+    const text = `${alert.title} ${alertSummary.bug_number &&
+      alertSummary.bug_number.toString()} ${alertSummary.revision.toString()}`;
 
     // searching with filter input and one or more metricFilter buttons on
     // will produce different results compared to when all filters are off
