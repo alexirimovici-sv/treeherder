@@ -47,6 +47,7 @@ export default class AlertsViewControls extends React.Component {
             this.setState(prevState => ({ [filter]: !prevState[filter] }))
           }
           updateFilterText={filterText => this.setState({ filterText })}
+          dropdownCol
         />
         {render(this.state)}
       </React.Fragment>

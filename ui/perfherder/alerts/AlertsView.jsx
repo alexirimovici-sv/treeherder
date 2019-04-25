@@ -147,7 +147,7 @@ export class AlertsView extends React.Component {
     ];
 
     return (
-      <Container fluid className="max-width-default">
+      <Container fluid className="pt-5 max-width-default">
         {loading && (
           <div className="loading">
             <FontAwesomeIcon
