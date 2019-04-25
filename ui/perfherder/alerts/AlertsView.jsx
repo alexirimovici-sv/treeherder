@@ -171,8 +171,8 @@ export class AlertsView extends React.Component {
             make changes
           </Alert>
         )}
-        <AlertsViewControls 
-          validated={validated} 
+        <AlertsViewControls
+          validated={validated}
           dropdownOptions={alertDropdowns}
           render={state =>
             alertSummaries.length > 0 &&
@@ -187,8 +187,9 @@ export class AlertsView extends React.Component {
                 {...this.props}
                 optionCollectionMap={optionCollectionMap}
               />
-            ))}
-          />
+            ))
+          }
+        />
       </Container>
     );
   }
