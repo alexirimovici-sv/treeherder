@@ -118,7 +118,7 @@ export default class AlertTable extends React.Component {
     const { alertSummary } = this.state;
 
     const matchesFilters =
-      (hideImprovements || alert.is_regression) &&
+      (!hideImprovements || alert.is_regression) &&
       (alert.summary_id === alertSummary.id ||
         alert.status !== phAlertStatusMap.DOWNSTREAM.id) &&
       !(
