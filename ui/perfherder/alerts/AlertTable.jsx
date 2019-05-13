@@ -239,7 +239,7 @@ export default class AlertTable extends React.Component {
                         className="max-width-row-text text-left text-muted pl-3 py-4"
                       >
                         <TruncatedText
-                          title="Notes:"
+                          title="Notes: "
                           maxLength={167}
                           text={alertSummary.notes}
                           showMoreClass="text-info"

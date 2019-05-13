@@ -264,7 +264,7 @@ export default class CompareTableView extends React.Component {
                   <Col small="12" className="px-0 max-width-default">
                     <Alert color="warning">
                       <TruncatedText
-                        title="Tests without results"
+                        title="Tests without results: "
                         maxLength={174}
                         text={testsNoResults}
                       />
