@@ -105,7 +105,7 @@ export default class AlertTableRow extends React.Component {
           </a>
           {alert.series_signature.has_subtests && (
             <a
-              href={this.getSubtestsURL}
+              href={this.getSubtestsURL()}
               target="_blank"
               rel="noopener noreferrer"
             >
