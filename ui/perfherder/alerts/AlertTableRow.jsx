@@ -74,19 +74,23 @@ export default class AlertTableRow extends React.Component {
   };
 
   getTitleText = (alert, alertStatus) => {
-    const { repository, framework } = this.props.alertSummary;
+    const { repository, framework, id } = this.props.alertSummary;
 
     let statusColor = '';
+    let textEffect = '';
     if (alertStatus === 'invalid') {
       statusColor = 'text-danger';
     }
     if (alertStatus === 'untriaged') {
       statusColor = 'text-success';
     }
+    if (alertStatus === 'invalid' || (alert.related_summary_id && alert.related_summary_id !== id)) {
+      textEffect = 'strike-through'
+    }
 
     return (
       <span>
-        {`${alert.title} (`}
+        <span className={textEffect}>{alert.title}</span> (
         <span className={statusColor}>{alertStatus}</span>
         {alert.related_summary_id && this.getReassignment(alert)}){' '}
         <span className="result-links">
