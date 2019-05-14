@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { react2angular } from 'react2angular/index.es2015';
-import { Alert, Container } from 'reactstrap';
+import { Alert, Container, Row, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
@@ -31,6 +31,7 @@ export class AlertsView extends React.Component {
       issueTrackers: [],
       loading: false,
       optionCollectionMap: null,
+      count: 0,
     };
   }
 
@@ -107,14 +108,27 @@ export class AlertsView extends React.Component {
     const response = processResponse(data, 'alertSummaries', errorMessages);
 
     if (response.alertSummaries) {
+      console.log(response.alertSummaries)
       updates = {
         ...updates,
-        ...{ alertSummaries: response.alertSummaries.results },
+        ...{ alertSummaries: response.alertSummaries.results, 
+            count: Math.round(response.alertSummaries.count/10),
+          },
       };
     } else {
       updates = { ...updates, ...response };
     }
     this.setState(updates);
+  }
+
+  generatePages = (page, count) => {
+    const pages = [];
+    if (page < count) {
+      for (let num = page; num < (page + 5); num++) { 
+        pages.push(num);
+      }
+    }
+    return pages;
   }
 
   render() {
@@ -127,6 +141,8 @@ export class AlertsView extends React.Component {
       alertSummaries,
       issueTrackers,
       optionCollectionMap,
+      page,
+      count,
     } = this.state;
     const { frameworks } = validated;
 
@@ -145,6 +161,8 @@ export class AlertsView extends React.Component {
         updateData: this.updateFramework,
       },
     ];
+    
+    const pageNums = this.generatePages(page, count);
 
     return (
       <Container fluid className="pt-5 max-width-default">
@@ -190,10 +208,41 @@ export class AlertsView extends React.Component {
             ))
           }
         />
-      </Container>
+        {pageNums.length > 0 &&
+        <Row className="justify-content-center pb-3">
+          <Pagination aria-label={`Page ${page}`}>
+            <PaginationItem>
+              <PaginationLink className="text-info" previous href="#" />
+            </PaginationItem>
+            {pageNums.map(page =>
+            <PaginationItem key={page}>
+              <PaginationLink className="text-info" href="#">
+              {page}
+              </PaginationLink>
+            </PaginationItem>
+            )}
+            <PaginationItem>
+              <PaginationLink className="text-info" next href="#" />
+            </PaginationItem>
+        </Pagination>
+      </Row>}
+    </Container>
     );
   }
 }
+
+// $scope.getAlertSummariesPage = function () {
+//   getAlertSummaries({
+//       page: $scope.alertSummaryCurrentPage,
+//       statusFilter: $scope.filterOptions.status.id,
+//       frameworkFilter: $scope.filterOptions.framework.id,
+//   }).then(function (data) {
+//       $scope.alertSummaries = undefined;
+//       addAlertSummaries(data.results, data.next);
+//       $scope.alertSummaryCount = data.count;
+//       $state.go('.', { page: $scope.alertSummaryCurrentPage }, { notify: false });
+//   });
+// };
 
 AlertsView.propTypes = {
   $stateParams: PropTypes.shape({}),
